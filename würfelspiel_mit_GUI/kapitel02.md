@@ -23,6 +23,10 @@ else:
     sg.PopupOK("Schlimmes Kind!")
 ```
 
+brav permalink:
+
+https://github.com/Daria-Jens/Python-Lessons/blob/7658c4e980a08697d9ccd7bca8e0f7b74d99e467/w%C3%BCrfelspiel_mit_GUI/brav.py#L1
+
 
 #kleines würfelspiel programm 
 
