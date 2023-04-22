@@ -12,28 +12,29 @@
   * testing
 
 ## requirement
-  * understanding how to use fstrings to display variables (numbers) inside of a text string https://docs.python.org/3/reference/lexical_analysis.html#formatted-string-literals
-  * understanding the escape sequence for new line (\n) inside of a text string
-  * working with while loops and the break statement
+  * understanding how to use `f-strings` to display variables (numbers) inside of a text string https://docs.python.org/3/reference/lexical_analysis.html#formatted-string-literals
+  * understanding the `escape sequence` for new line (\n) inside of a text string
+  * working with `while` loops and the `break` and `continue` statements 
   * working with if statement
   
 ## recommended  
   * understanding what a list and a nested list is (a list inside a list)
   * understanding what a tuple is
-  * working with dictionarys 
-  * understanding unicode 
+  * working with dictionaries 
+  * understanding how to write unicode characters
+  * understanding how the _not_ operator works with boolean values (_True_ and _False_)
   
 ## terms
 
   **GUI**: Graphical User Interface. If you communicate with the computer using a mouse to click on buttons, instead of just typing text, you are using a GUI.
   
-  **widget**: The elements inside a gui. For example buttons, sliders, fields to enter a password etc.
+  **Widget**: The elements inside a gui. For example buttons, sliders, fields to enter a password etc.
 
   **IDLE**: Interactive Development Learnint Enviroment. A python code editor and also a Python REPL
 
   **REPL**: Rapid Evaluation Print Loop. To test out short line(s) of python code directly. 
 
-  
+  **Boolean values**: A value that can either be **True** or **False**  
 
 ## preparation
 
@@ -45,7 +46,7 @@
     * yacht: https://en.wikipedia.org/wiki/Yacht_(dice_game)
     * yahtzee: https://en.wikipedia.org/wiki/Yahtzee
   * unicode tables: know unicodes for dice faces: https://en.wikipedia.org/wiki/Miscellaneous_Symbols
-  * random module: understand the random.randint() command, see https://docs.python.org/3.10/library/random.html?highlight=random#random.randint
+  * random module: understand the `random.randint()` command, see https://docs.python.org/3.10/library/random.html?highlight=random#random.randint
 
 
 

@@ -357,7 +357,7 @@ download: [dicegame4.py](dicegame4.py)
 ```python
 """
 dicegame4: display 5 buttons in a row, showing dice faces
-include a "throw all" button
+include a "throw dice" button
 allows locking/unlocking of each die button 
 """
 
@@ -419,7 +419,7 @@ window.close()
 
 ### code explained
 
-To display the locked dice buttons in a different color, some variables are created:
+To display the locked dice buttons in a different color than the unlocked buttons, some variables are created to hold color values:
 
 ```python
 color1 = sg.theme_button_color_text()
@@ -427,11 +427,11 @@ color2 = sg.theme_button_color_background()
 color3 = sg.theme_background_color()
 ```
 
-PySimpleGUI supports different color _themes_ and some functions to get certain colors from the actual theme. More about themes later.
+PySimpleGUI supports different color _themes_ and some functions to get certain colors from the actual color theme. More about themes later.
 
 A new _dictionary_ is created and stored in the variable _locked_. The _keys_ of this dictionary are the same as the _keys_ of the button widgets: ("d1", "d2", ... "d5").
 
-The _values_ of _locked_ are `boolean` values and at the beginning of the program they are all set to `False`.
+The _values_ of the _locked_ dictionary are `boolean` values and at the beginning of the program they are all set to `False`.
 
 The event handler toggles the value in the _locked_ dictionary if one of the five buttons is clicked: 
   * not `True` becomes `False`
@@ -442,6 +442,155 @@ if event in locked.keys():
     #toggle lock
     locked[event] = not locked[event]
 ```
+
+Now the first task of the big task list above (see dicegame0.py) is done. Four more to go!
+
+* ~~The user must throw all 5 dice and can not choose to throw only some dice.~~
+* A game round consist of only one throw of all five dice 
+ instead of three seperate throws of some selected dice
+* The user can not choose what option to play after a game round
+* There is no score keeping of points
+* The game does not end after 13 game rounds
+
+
+
+## improvement: 3 throws, 13 game rounds
+
+The next version, dicegame5.py, introduces variables to count the number of throws per game round (3) and the number of game rounds per game (13). Some special buttons like "start next game round" and "start new game" are made visible / invisible by updating the _visible_ attribute.
+
+A special _throw_number 0_ state is introduced before each game round so that the player know a new game round has started, and all dice buttons are resetted to a question mark during this time.
+
+Download: [dicegame5.py](dicegame5.py)
+```python
+"""
+dicegame5: display 5 buttons in a row, showing dice faces
+include a "throw dice" button
+allows locking/unlocking of each die button 
+play three dice throws per game round
+play 13 game rounds
+hide/display buttons for 'start new game' and 'start next game round'
+"""
+
+import random
+import PySimpleGUI as sg
+
+game_round = 1
+game_rounds = 13
+throws_per_round = 3
+throw_number = 0  
+
+color1 = sg.theme_button_color_text()
+color2 = sg.theme_button_color_background()
+color3 = sg.theme_background_color()
+
+codes = {1:"\u2680",
+         2:"\u2681",
+         3:"\u2682",
+         4:"\u2683",
+         5:"\u2684",
+         6:"\u2685",
+         }
+
+locked = {"d1":False,
+          "d2":False,
+          "d3":False,
+          "d4":False,
+          "d5":False}
+
+layout = [
+    [sg.Text("starting game round 1 of 13.", key="game_round_counter"),
+     sg.Text("throw #1 of 3", key="throw_counter")],
+    [sg.Text("Click buttons to toggle lock, click 'throw dice' to play")],
+    [sg.Button("?", key="d1", disabled=True, font=("System",64)),
+     sg.Button("?", key="d2", disabled=True, font=("System",64)),
+     sg.Button("?", key="d3", disabled=True, font=("System",64)),
+     sg.Button("?", key="d4", disabled=True, font=("System",64)),
+     sg.Button("?", key="d5", disabled=True, font=("System",64)),     
+    ],
+    [sg.Button("Cancel"),
+     sg.Button("start next game round", visible=False),
+     sg.Button("start new game", visible=False),
+     sg.Button("throw dice")],
+]
+
+window = sg.Window("dicegame version 5", layout)
+
+while True:
+    event, values = window.read()
+    if event in ("Cancel", sg.WIN_CLOSED):
+        break
+    
+    if event in locked.keys():
+        # toggle lock
+        locked[event] = not locked[event]
+        if locked[event]:
+            window[event].update(button_color=(color1,color3) )
+        else:
+            window[event].update(button_color=(color1,color2) )        
+    
+    if event == "start new game":
+        game_round = 1
+        throw_number = 0
+        window["start new game"].update(visible=False)
+
+    if event in ( "start next game round", "start new game"):
+        #throw_number is already set to 0
+        for d in locked.keys():
+            locked[d] = False
+            window[d].update(text="?")
+            window[d].update(disabled=True)
+            window[d].update(button_color = (color1, color2)) # not locked
+        window["start next game round"].update(visible=False)
+        window["throw dice"].update(visible=True)
+        window["throw_counter"].update( value=f"throw # {throw_number+1} of {throws_per_round}")
+        window["game_round_counter"].update(value=f"starting Game round {game_round} of {game_rounds}.")
+    
+    if event == "throw dice":
+        throw_number += 1
+        window["throw_counter"].update(value=f"throw # {throw_number} of {throws_per_round}")
+        window["game_round_counter"].update(value=f"Game round {game_round} of {game_rounds}.")
+        if throw_number == 1:
+            for d in locked.keys():
+                locked[d] = False
+                window[d].update(disabled=False)
+                window[d].update(button_color = (color1, color2)) # not locked
+        
+        # throw all not-locked dice
+        for d in locked.keys():
+            if locked[d]:
+                continue
+            throw = random.randint(1,6)
+            window[d].update(text=f"{codes[throw]}")
+
+        if throw_number == throws_per_round:
+            for d in locked.keys():
+                locked[d] = True
+                window[d].update(button_color = (color1, color2)) # not locked
+                window[d].update(disabled=True)
+            throw_number = 0
+            game_round += 1
+            if game_round > game_rounds:
+                window["start new game"].update(visible=True)
+                window["start next game round"].update(visible=False)
+            else:
+                window["start next game round"].update(visible=True)
+            window["throw dice"].update(visible=False)
+
+window.close()
+sg.PopupOK("Game over")
+```
+
+![screenshot dicegame5](dicegame5.png)
+
+
+While it is still not possible to choose what option to play (full house, chance etc..) already three points of the big list of tasks (see dicegame0.py above) are done:
+
+* ~~The user must throw all 5 dice and can not choose to throw only some dice.~~
+* ~~A game round consist of only one throw of all five dice 
+ instead of three seperate throws of some selected dice~~
+* The user can not choose what option to play after a game round
+* There is no score keeping of points
+* ~~The game does not end after 13 game rounds~~
 
 
 
